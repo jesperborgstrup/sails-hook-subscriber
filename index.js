@@ -55,9 +55,9 @@ module.exports = function(sails) {
             //loaded workers
             var workerDefinition = workers[worker];
 
-            //tell subscriber about the 
+            //tell subscriber about the
             //worker definition
-            //and register if 
+            //and register if
             //ready to perform available jobs
             subscriber
                 .process(
@@ -94,7 +94,7 @@ module.exports = function(sails) {
                     host: '127.0.0.1'
                 },
                 //number of milliseconds
-                //to wait for workers to 
+                //to wait for workers to
                 //finish their current active job(s)
                 //before shutdown
                 shutdownDelay: 5000,
@@ -128,7 +128,7 @@ module.exports = function(sails) {
             var config = sails.config[this.configKey];
 
             // Lets wait on some of the sails core hooks to
-            // finish loading before 
+            // finish loading before
             // load `sails-hook-subscriber`
             var eventsToWaitFor = [];
 
@@ -151,6 +151,11 @@ module.exports = function(sails) {
                     //initialize subscriber
                     subscriber = kue.createQueue(config);
 
+                    //bind error events to handle uncaught exceptions
+                    subscriber.on('error', function(err) {
+                      sails.log.error(err);
+                    });
+
                     //initialize workers
                     initializeWorkers(config);
 
@@ -159,7 +164,7 @@ module.exports = function(sails) {
 
 
                     //shutdown kue subscriber
-                    //and wait for time equla to `shutdownDelay` 
+                    //and wait for time equla to `shutdownDelay`
                     //for workers to finalize their jobs
                     function shutdown() {
                         subscriber
